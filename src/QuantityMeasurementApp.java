@@ -1,54 +1,49 @@
 public class QuantityMeasurementApp {
 
-    static class Feet {
-        private final double value;
+    enum LengthUnit {
+        FEET(1.0),
+        INCH(1.0 / 12.0);
 
-        public Feet(double value) {
+        private final double toFeet;
+
+        LengthUnit(double toFeet) {
+            this.toFeet = toFeet;
+        }
+
+        public double toFeet(double value) {
+            return value * toFeet;
+        }
+    }
+
+    static class Quantity {
+        private final double value;
+        private final LengthUnit unit;
+
+        public Quantity(double value, LengthUnit unit) {
             this.value = value;
+            this.unit = unit;
         }
 
         @Override
         public boolean equals(Object obj) {
+
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
 
-            Feet other = (Feet) obj;
-            return Double.compare(this.value, other.value) == 0;
+            Quantity other = (Quantity) obj;
+
+            double thisValue = this.unit.toFeet(this.value);
+            double otherValue = other.unit.toFeet(other.value);
+
+            return Double.compare(thisValue, otherValue) == 0;
         }
-    }
-
-    static class Inches {
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-
-            Inches other = (Inches) obj;
-            return Double.compare(this.value, other.value) == 0;
-        }
-    }
-
-    public static void checkFeetEquality(double a, double b) {
-        Feet f1 = new Feet(a);
-        Feet f2 = new Feet(b);
-        System.out.println("Feet equal? " + f1.equals(f2));
-    }
-
-    public static void checkInchesEquality(double a, double b) {
-        Inches i1 = new Inches(a);
-        Inches i2 = new Inches(b);
-        System.out.println("Inches equal? " + i1.equals(i2));
     }
 
     public static void main(String[] args) {
 
-        checkFeetEquality(1.0, 1.0);
-        checkInchesEquality(1.0, 1.0);
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+
+        System.out.println("Are equal? " + q1.equals(q2));
     }
 }
